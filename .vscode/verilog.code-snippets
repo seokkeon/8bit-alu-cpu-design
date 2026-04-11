@@ -1,0 +1,128 @@
+{
+    "Module Template": {
+        "prefix": "module",
+        "body": [
+            "// ${1:module_name}.v - ${2:description}",
+            "",
+            "module ${1:module_name} (",
+            "    input ${3:clk},",
+            "    input ${4:rst},",
+            "    $0",
+            ");",
+            "",
+            "    // Your code here",
+            "",
+            "endmodule"
+        ],
+        "description": "Create a basic Verilog module"
+    },
+    
+    "Always Block (Combinational)": {
+        "prefix": "always-comb",
+        "body": [
+            "always @(*) begin",
+            "    $0",
+            "end"
+        ],
+        "description": "Combinational always block"
+    },
+    
+    "Always Block (Sequential)": {
+        "prefix": "always-seq",
+        "body": [
+            "always @(posedge ${1:clk}) begin",
+            "    $0",
+            "end"
+        ],
+        "description": "Sequential always block"
+    },
+    
+    "Always Block (With Reset)": {
+        "prefix": "always-reset",
+        "body": [
+            "always @(posedge ${1:clk} or posedge ${2:rst}) begin",
+            "    if (${2:rst}) begin",
+            "        $3",
+            "    end else begin",
+            "        $0",
+            "    end",
+            "end"
+        ],
+        "description": "Sequential always block with reset"
+    },
+    
+    "Case Statement": {
+        "prefix": "case",
+        "body": [
+            "case (${1:signal})",
+            "    ${2:value1}: ${3:result} = ${4:value};",
+            "    ${5:value2}: ${3:result} = ${6:value};",
+            "    default: ${3:result} = ${7:default_value};",
+            "endcase"
+        ],
+        "description": "Case statement"
+    },
+    
+    "Testbench Template": {
+        "prefix": "testbench",
+        "body": [
+            "// ${1:module_name}_tb.v - Testbench for ${1:module_name}",
+            "",
+            "`timescale 1ns/1ps",
+            "",
+            "module ${1:module_name}_tb;",
+            "",
+            "    // Testbench signals",
+            "    reg ${2:clk};",
+            "    reg ${3:rst};",
+            "    $0",
+            "",
+            "    // Instantiate DUT",
+            "    ${1:module_name} uut (",
+            "        .${2:clk}(${2:clk}),",
+            "        .${3:rst}(${3:rst})",
+            "    );",
+            "",
+            "    // Clock generation",
+            "    initial begin",
+            "        ${2:clk} = 0;",
+            "        forever #5 ${2:clk} = ~${2:clk};",
+            "    end",
+            "",
+            "    // Test procedure",
+            "    initial begin",
+            "        \\$dumpfile(\"${1:module_name}_tb.vcd\");",
+            "        \\$dumpvars(0, ${1:module_name}_tb);",
+            "        ",
+            "        // Reset",
+            "        ${3:rst} = 1;",
+            "        #10 ${3:rst} = 0;",
+            "        ",
+            "        // Your tests here",
+            "        ",
+            "        #100;",
+            "        \\$display(\"Testbench complete!\");",
+            "        \\$finish;",
+            "    end",
+            "",
+            "endmodule"
+        ],
+        "description": "Complete testbench template"
+    },
+    
+    "Parameter": {
+        "prefix": "param",
+        "body": [
+            "parameter ${1:NAME} = ${2:value};"
+        ],
+        "description": "Parameter declaration"
+    },
+    
+    "Localparam": {
+        "prefix": "localparam",
+        "body": [
+            "localparam ${1:NAME} = ${2:value};"
+        ],
+        "description": "Local parameter declaration"
+    }
+}
