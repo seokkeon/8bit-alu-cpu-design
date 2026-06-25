@@ -1,0 +1,22 @@
+# synth.ys - Yosys synthesis script for CPU
+
+# Read design files
+read_verilog rtl/alu.v
+read_verilog rtl/regfile.v
+read_verilog rtl/cpu.v
+
+# Check hierarchy and synthesize to generic cells.
+hierarchy -check -top cpu
+synth -top cpu
+
+# Clean up
+clean
+
+# Generate statistics
+stat
+
+# Write synthesized netlist
+write_verilog synth/cpu_synth.v
+
+# Write graphical representation
+show -prefix synth/cpu_diagram -format dot

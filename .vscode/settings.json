@@ -1,0 +1,33 @@
+{
+    // Verilog/SystemVerilog 설정
+    "verilog.linting.linter": "iverilog",
+    "verilog.linting.iverilog.arguments": "-t null -Wall",
+    "verilog.ctags.path": "ctags",
+    
+    // 파일 연결
+    "files.associations": {
+        "*.v": "verilog",
+        "*.vh": "verilog",
+        "*.sv": "systemverilog"
+    },
+    
+    // 탭 설정 (Verilog 표준)
+    "[verilog]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": false
+    },
+    
+    // 파일 제외
+    "files.exclude": {
+        "**/*.vcd": true,
+        "**/*.vvp": true,
+        "**/*_sim": true
+    },
+    
+    // 터미널 설정
+    "terminal.integrated.scrollback": 5000,
+    
+    // 추천 확장 프로그램 자동 설치 권장
+    "extensions.ignoreRecommendations": false
+}

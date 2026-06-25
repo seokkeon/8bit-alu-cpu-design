@@ -1,0 +1,107 @@
+# Makefile - Build automation for CPU project (Windows compatible)
+
+.PHONY: all clean sim-alu sim-regfile sim-cpu synth help view-alu view-regfile view-cpu
+
+# Detect OS
+ifeq ($(OS),Windows_NT)
+    # Windows
+    RM = del /Q
+    RMDIR = rmdir /S /Q
+    PATHSEP = \\
+    GTKWAVE = start gtkwave
+else
+    # Unix-like (Linux, macOS, WSL)
+    RM = rm -f
+    RMDIR = rm -rf
+    PATHSEP = /
+    GTKWAVE = gtkwave
+endif
+
+# Default target
+all: help
+
+help:
+	@echo === CPU Project Build System ===
+	@echo.
+	@echo Simulation targets:
+	@echo   make sim-alu      - Simulate ALU module
+	@echo   make sim-regfile  - Simulate Register File
+	@echo   make sim-cpu      - Simulate complete CPU
+	@echo.
+	@echo Waveform viewing:
+	@echo   make view-alu     - View ALU waveforms
+	@echo   make view-regfile - View Register File waveforms
+	@echo   make view-cpu     - View CPU waveforms
+	@echo.
+	@echo Synthesis:
+	@echo   make synth        - Synthesize CPU with Yosys
+	@echo.
+	@echo Utility:
+	@echo   make clean        - Remove generated files
+	@echo.
+
+# Simulation targets
+sim-alu:
+	@echo Compiling and simulating ALU...
+	iverilog -o alu_sim tb$(PATHSEP)alu_tb.v rtl$(PATHSEP)alu.v
+	vvp alu_sim
+	@echo Done. Run 'make view-alu' to see waveforms
+
+sim-regfile:
+	@echo Compiling and simulating Register File...
+	iverilog -o regfile_sim tb$(PATHSEP)regfile_tb.v rtl$(PATHSEP)regfile.v
+	vvp regfile_sim
+	@echo Done. Run 'make view-regfile' to see waveforms
+
+sim-cpu:
+	@echo Compiling and simulating CPU...
+	iverilog -o cpu_sim tb$(PATHSEP)cpu_tb.v rtl$(PATHSEP)cpu.v rtl$(PATHSEP)alu.v rtl$(PATHSEP)regfile.v
+	vvp cpu_sim
+	@echo Done. Run 'make view-cpu' to see waveforms
+
+# Waveform viewing
+view-alu:
+ifeq ($(OS),Windows_NT)
+	@if exist alu_tb.vcd ($(GTKWAVE) alu_tb.vcd) else (echo Error: alu_tb.vcd not found. Run 'make sim-alu' first)
+else
+	@test -f alu_tb.vcd && $(GTKWAVE) alu_tb.vcd & || echo "Error: alu_tb.vcd not found"
+endif
+
+view-regfile:
+ifeq ($(OS),Windows_NT)
+	@if exist regfile_tb.vcd ($(GTKWAVE) regfile_tb.vcd) else (echo Error: regfile_tb.vcd not found)
+else
+	@test -f regfile_tb.vcd && $(GTKWAVE) regfile_tb.vcd & || echo "Error: regfile_tb.vcd not found"
+endif
+
+view-cpu:
+ifeq ($(OS),Windows_NT)
+	@if exist cpu_tb.vcd ($(GTKWAVE) cpu_tb.vcd) else (echo Error: cpu_tb.vcd not found)
+else
+	@test -f cpu_tb.vcd && $(GTKWAVE) cpu_tb.vcd & || echo "Error: cpu_tb.vcd not found"
+endif
+
+# Synthesis (requires yosys)
+synth:
+ifeq ($(OS),Windows_NT)
+	@echo Synthesis not fully supported on native Windows
+	@echo Please use WSL2 or run: yosys -s synth/synth.ys
+else
+	@./synthesize.sh
+endif
+
+# Clean
+clean:
+	@echo Cleaning generated files...
+ifeq ($(OS),Windows_NT)
+	@if exist *.vcd $(RM) *.vcd
+	@if exist *.vvp $(RM) *.vvp
+	@if exist *_sim $(RM) *_sim
+	@if exist *_sim.exe $(RM) *_sim.exe
+	@if exist synth$(PATHSEP)*.v $(RM) synth$(PATHSEP)*.v
+	@if exist synth$(PATHSEP)*.dot $(RM) synth$(PATHSEP)*.dot
+else
+	$(RM) *.vcd *.vvp *_sim
+	$(RM) synth/*.v synth/*.dot synth/*.png
+endif
+	@echo Clean complete

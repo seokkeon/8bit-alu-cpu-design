@@ -1,0 +1,14 @@
+# Generated simulation artifacts
+*.vcd
+*.vvp
+*_sim
+*_sim.exe
+
+# Generated synthesis artifacts
+synth/cpu_synth.v
+synth/cpu_diagram.dot
+synth/cpu_diagram.png
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
